@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, DatePicker, Space, Table } from 'antd';
 import type { ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
+import { SearchOutlined } from '@ant-design/icons';
 
 const { RangePicker } = DatePicker;
 
@@ -81,8 +82,13 @@ const columns: ProColumns<TableListItem>[] = [
   {
     title: '创建者',
     width: 120,
+    filters: true,
+    onFilter: true,
     dataIndex: 'creator',
     valueType: 'select',
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
     valueEnum: {
       all: { text: '全部' },
       付小小: { text: '付小小' },

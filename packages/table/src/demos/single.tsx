@@ -33,6 +33,7 @@ const columns: ProColumns<GithubIssueItem>[] = [
     copyable: true,
     ellipsis: true,
     tip: '标题过长会自动收缩',
+    width: 248,
     formItemProps: {
       rules: [
         {

@@ -44,6 +44,7 @@ import {
 import { genProColumnToColumn } from './utils/genProColumnToColumn';
 
 import './index.less';
+import './hooks/useAntdResizableHeader/index.less';
 import type {
   PageInfo,
   ProTableProps,
@@ -54,11 +55,13 @@ import type {
 import type { ActionType } from '.';
 import { columnSort } from './utils/columnSort';
 import ProForm from '@ant-design/pro-form';
+import useARH from './hooks/useAntdResizableHeader';
 
 function TableRender<T extends Record<string, any>, U, ValueType>(
   props: ProTableProps<T, U, ValueType> & {
     action: UseFetchDataAction<any>;
     tableColumn: any[];
+    components: any;
     toolbarDom: JSX.Element | null;
     searchNode: JSX.Element | null;
     alertDom: JSX.Element | null;
@@ -74,6 +77,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
     tableClassName,
     action,
     tableColumn: tableColumns,
+    components,
     type,
     pagination,
     rowSelection,
@@ -164,6 +168,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
     className: tableClassName,
     style: tableStyle,
     columns,
+    components,
     loading: action.loading,
     dataSource: editableUtils.newLineRecord ? editableDataSource() : action.dataSource,
     pagination,
@@ -342,7 +347,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     postData,
     pagination: propsPagination,
     actionRef: propsActionRef,
-    columns: propsColumns = [],
+    columns,
     toolBarRender,
     onLoad,
     onRequestError,
@@ -370,6 +375,18 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     tooltip,
     ...rest
   } = props;
+
+  /** Jufeng 表格头可以放大 ** */
+  const { components, resizableColumns, tableWidth, resetColumns } = useARH({
+    columns: useMemo(() => columns, []),
+    // 保存拖拽宽度至本地localStorage
+    columnsState: {
+      persistenceKey: 'localKey',
+      persistenceType: 'sessionStorage',
+    },
+  });
+
+  const propsColumns = [...resizableColumns];
 
   const className = classNames(defaultClassName, propsClassName);
 
@@ -768,6 +785,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
       rowSelection={propsRowSelection !== false ? rowSelection : undefined}
       className={className}
       tableColumn={tableColumn}
+      components={components}
       isLightFilter={isLightFilter}
       action={action}
       alertDom={alertDom}
