@@ -56,6 +56,7 @@ import type { ActionType } from '.';
 import { columnSort } from './utils/columnSort';
 import ProForm from '@ant-design/pro-form';
 import useARH from './hooks/useAntdResizableHeader';
+import useAntdFilterHeader from './hooks/useAntdCustomFilterHeader';
 
 function TableRender<T extends Record<string, any>, U, ValueType>(
   props: ProTableProps<T, U, ValueType> & {
@@ -376,9 +377,17 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     ...rest
   } = props;
 
+  /** Jufeng 表头筛选 ** */
+
+  const { filterColumns } = useAntdFilterHeader({
+    columns: useMemo(() => columns, []),
+  });
+
+  console.log('r>>>>>删选表头》》》》', filterColumns);
+
   /** Jufeng 表格头可以放大 ** */
   const { components, resizableColumns, tableWidth, resetColumns } = useARH({
-    columns: useMemo(() => columns, []),
+    columns: useMemo(() => filterColumns, []),
     // 保存拖拽宽度至本地localStorage
     columnsState: {
       persistenceKey: 'localKey',
