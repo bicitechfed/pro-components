@@ -8,7 +8,8 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import type { TablePaginationConfig } from 'antd';
-import { Table, Spin, ConfigProvider, Card } from 'antd';
+import { Table, Spin, ConfigProvider, Card, Tag, Button } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 
 import type { ParamsType } from '@ant-design/pro-provider';
 import { useIntl, ConfigProviderWrap } from '@ant-design/pro-provider';
@@ -58,6 +59,7 @@ import ProForm from '@ant-design/pro-form';
 import useARH from './hooks/useAntdResizableHeader';
 import useAntdFilterHeader from './hooks/useAntdCustomFilterHeader';
 
+/** ++++++++++++++++TableRender start+++++++++++++++* */
 function TableRender<T extends Record<string, any>, U, ValueType>(
   props: ProTableProps<T, U, ValueType> & {
     action: UseFetchDataAction<any>;
@@ -66,6 +68,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
     toolbarDom: JSX.Element | null;
     searchNode: JSX.Element | null;
     alertDom: JSX.Element | null;
+    filterDom: JSX.Element | null;
     isLightFilter: boolean;
     onSortChange: (sort: any) => void;
     onFilterChange: (sort: any) => void;
@@ -90,6 +93,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
     style,
     cardProps,
     alertDom,
+    filterDom,
     name,
     onSortChange,
     onFilterChange,
@@ -226,6 +230,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
         <>
           {toolbarDom}
           {alertDom}
+          {filterDom}
           <ProForm
             onInit={(_, form) => {
               counter.setEditorTableForm(form);
@@ -260,11 +265,12 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
       <>
         {toolbarDom}
         {alertDom}
+        {filterDom}
         {tableDom}
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alertDom, !!props.editable, tableDom, toolbarDom]);
+  }, [alertDom, !!props.editable, tableDom, toolbarDom, filterDom]);
 
   /** Table 区域的 dom，为了方便 render */
   const tableAreaDom =
@@ -294,6 +300,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
       return props.tableRender(props, tableAreaDom, {
         toolbar: toolbarDom || undefined,
         alert: alertDom || undefined,
+        filter: filterDom || undefined,
         table: tableDom || undefined,
       });
     }
@@ -331,7 +338,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
     </ConfigProvider>
   );
 }
-
+/** ++++++++++++++++TableRender end+++++++++++++++* */
 const emptyObj = {};
 const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType>(
   props: ProTableProps<T, U, ValueType> & {
@@ -379,11 +386,9 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
 
   /** Jufeng 表头筛选 ** */
 
-  const { filterColumns } = useAntdFilterHeader({
+  const { filterColumns, filterState, dispatch } = useAntdFilterHeader({
     columns: useMemo(() => columns, []),
   });
-
-  console.log('r>>>>>删选表头》》》》', filterColumns);
 
   /** Jufeng 表格头可以放大 ** */
   const { components, resizableColumns, tableWidth, resetColumns } = useARH({
@@ -782,6 +787,62 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
         alwaysShowAlert={propsRowSelection?.alwaysShowAlert}
       />
     ) : null;
+  /** Jufeng 内置的filterDom * */
+  const handleFilterTagClear = (key) => {
+    console.log('--->>>>proFilter>>>>', filterState[key]);
+    if (filterState[key]) {
+      console.log('----clearFilters--');
+      filterState[key].clearFilters();
+      filterState[key].setSelectedKeys([]);
+    }
+    dispatch({
+      type: 'updateField',
+      payload: {
+        [key]: null,
+      },
+    });
+  };
+  const handleFilterTagClearAll = () => {
+    Object.keys(filterState).map((key) => {
+      handleFilterTagClear(key);
+      return null;
+    });
+    if (actionRef && actionRef.current) {
+      actionRef.current.reset();
+    }
+  };
+  /** Jufeng 内置的filterDom * */
+  const filterDom = useMemo(() => {
+    const filterStateTmp = Object.keys(filterState)
+      .filter((key) => filterState[key] !== null && filterState[key] !== undefined)
+      .reduce((acc, key) => ({ ...acc, [key]: filterState[key] }), {});
+    return (
+      <div>
+        {Object.keys(filterStateTmp).map((key) => {
+          if (!filterState[key]) {
+            return null;
+          } else {
+            const column = columns?.filter((c) => c.dataIndex === key)[0] || {};
+            return (
+              <Tag
+                key={key}
+                closable
+                onClose={() => handleFilterTagClear(key)}
+                style={{ marginBottom: 8, display: 'inline-block' }}
+              >
+                {column.title}：{filterState[key].searchValue[0]}
+              </Tag>
+            );
+          }
+        })}
+        {Object.keys(filterStateTmp).length > 0 && (
+          <Button size="small" type="link" onClick={handleFilterTagClearAll}>
+            全部清除
+          </Button>
+        )}
+      </div>
+    );
+  }, [filterState]);
   return (
     <TableRender
       {...props}
@@ -798,6 +859,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
       isLightFilter={isLightFilter}
       action={action}
       alertDom={alertDom}
+      filterDom={filterDom}
       toolbarDom={toolbarDom}
       onSortChange={setProSort}
       onFilterChange={setProFilter}

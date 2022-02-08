@@ -216,6 +216,7 @@ export type ProTableProps<T, U extends ParamsType, ValueType = 'text'> = {
     domList: {
       toolbar: JSX.Element | undefined;
       alert: JSX.Element | undefined;
+      filter: JSX.Element | undefined;
       table: JSX.Element | undefined;
     },
   ) => React.ReactNode;

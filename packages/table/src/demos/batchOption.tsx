@@ -3,6 +3,7 @@ import { Button, DatePicker, Space, Table } from 'antd';
 import type { ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { SearchOutlined } from '@ant-design/icons';
+import request from 'umi-request';
 
 const { RangePicker } = DatePicker;
 
@@ -70,6 +71,9 @@ const columns: ProColumns<TableListItem>[] = [
     width: 120,
     align: 'right',
     dataIndex: 'callNumber',
+    filters: true,
+    onFilter: true,
+    valueType: 'date',
   },
   {
     title: '执行进度',
@@ -81,7 +85,7 @@ const columns: ProColumns<TableListItem>[] = [
   },
   {
     title: '创建者',
-    width: 120,
+    width: 300,
     filters: true,
     onFilter: true,
     dataIndex: 'creator',
@@ -122,6 +126,7 @@ const columns: ProColumns<TableListItem>[] = [
     key: 'option',
     valueType: 'option',
     fixed: 'right',
+    search: false,
     render: () => [<a key="link">链路</a>],
   },
 ];
@@ -130,6 +135,11 @@ export default () => {
   return (
     <ProTable<TableListItem>
       columns={columns}
+      request={async (params = {}) =>
+        request('https://proapi.azurewebsites.net/github/issues', {
+          params,
+        })
+      }
       rowSelection={{
         // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
         // 注释该行则默认不显示下拉选项
@@ -164,7 +174,6 @@ export default () => {
       }}
       dataSource={tableListDataSource}
       scroll={{ x: 1300 }}
-      options={false}
       search={false}
       rowKey="key"
       headerTitle="批量操作"
