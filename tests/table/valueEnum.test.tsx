@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import React, { useContext } from 'react';
 import ProProvider from '@ant-design/pro-provider';
-import ProTable from '@ant-design/pro-table';
+import ProTable from 'bici-pro-table';
 import { act } from 'react-dom/test-utils';
 import { Input } from 'antd';
 

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import type { ActionType, ProColumns } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
+import type { ActionType, ProColumns } from 'bici-pro-table';
+import { EditableProTable } from 'bici-pro-table';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import { ProFormDigit } from '@ant-design/pro-form';
 import ProForm, { ProFormDependency } from '@ant-design/pro-form';

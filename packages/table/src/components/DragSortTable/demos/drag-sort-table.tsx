@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { ProColumns } from '@ant-design/pro-table';
-import { DragSortTable } from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import { DragSortTable } from 'bici-pro-table';
 import { MenuOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 

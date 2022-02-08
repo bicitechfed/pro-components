@@ -1,6 +1,6 @@
 import { mount, render } from 'enzyme';
 import React from 'react';
-import ProTable, { ListToolBar } from '@ant-design/pro-table';
+import ProTable, { ListToolBar } from 'bici-pro-table';
 import { SettingOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import { act } from 'react-dom/test-utils';

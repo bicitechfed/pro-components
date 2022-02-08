@@ -3,8 +3,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Tabs, Tag, Space, message } from 'antd';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import type { ProColumns } from '@ant-design/pro-table';
-import ProTable, { TableDropdown } from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import ProTable, { TableDropdown } from 'bici-pro-table';
 import request from 'umi-request';
 import ProCard from '@ant-design/pro-card';
 

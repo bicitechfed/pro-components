@@ -1,6 +1,6 @@
 ﻿import React, { useRef, useState } from 'react';
-import type { ProColumns } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import { EditableProTable } from 'bici-pro-table';
 import type { ProFormInstance } from '@ant-design/pro-form';
 import ProForm, { ProFormRadio, ProFormField, ProFormDependency } from '@ant-design/pro-form';
 import ProCard from '@ant-design/pro-card';

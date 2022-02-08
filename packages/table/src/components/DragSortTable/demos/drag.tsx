@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { MenuOutlined } from '@ant-design/icons';
-import type { ProColumns } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import './drag.less';
 import { arrayMoveImmutable } from '@ant-design/pro-utils';
 

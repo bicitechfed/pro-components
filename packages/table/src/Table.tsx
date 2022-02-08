@@ -9,7 +9,6 @@ import React, {
 } from 'react';
 import type { TablePaginationConfig } from 'antd';
 import { Table, Spin, ConfigProvider, Card, Tag, Button } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
 
 import type { ParamsType } from '@ant-design/pro-provider';
 import { useIntl, ConfigProviderWrap } from '@ant-design/pro-provider';
@@ -391,7 +390,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
   });
 
   /** Jufeng 表格头可以放大 ** */
-  const { components, resizableColumns, tableWidth, resetColumns } = useARH({
+  const { components, resizableColumns } = useARH({
     columns: useMemo(() => filterColumns, []),
     // 保存拖拽宽度至本地localStorage
     columnsState: {
@@ -788,7 +787,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
       />
     ) : null;
   /** Jufeng 内置的filterDom * */
-  const handleFilterTagClear = (key) => {
+  const handleFilterTagClear = (key: any) => {
     console.log('--->>>>proFilter>>>>', filterState[key]);
     if (filterState[key]) {
       console.log('----clearFilters--');
@@ -808,6 +807,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
       return null;
     });
     if (actionRef && actionRef.current) {
+      // @ts-ignore
       actionRef.current.reset();
     }
   };

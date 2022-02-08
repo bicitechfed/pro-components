@@ -1,6 +1,6 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import { DragSortTable } from '@ant-design/pro-table';
+import { DragSortTable } from 'bici-pro-table';
 import { waitForComponentToPaint } from '../util';
 import { MenuOutlined } from '@ant-design/icons';
 import { sortData } from '../../packages/table/src/utils';

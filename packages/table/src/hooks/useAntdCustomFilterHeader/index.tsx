@@ -1,16 +1,12 @@
-import React, { useState, useReducer, useRef } from 'react';
-import { Input, Space, Button, Highlighter } from 'antd';
+import React, { useReducer } from 'react';
+import { Input, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
-import { GETKEY } from '../useAntdResizableHeader/utils/useGetDataIndexColumns';
-import { renderFilterDom } from './util';
 
-const initialFilterState: {
-  [field: string]: any;
-} = {};
+const initialFilterState: Record<string, any> = {};
 
-function reducer(state, action) {
+function reducer(state: any, action: any) {
   switch (action.type) {
     case 'updateField':
       return {
@@ -22,9 +18,16 @@ function reducer(state, action) {
   }
 }
 
-const useAntdFilterHeader = ({ columns }) => {
+const useAntdFilterHeader = ({ columns }: any) => {
+  let searchInput: any = null;
   const [filterState, dispatch] = useReducer(reducer, initialFilterState);
-  const handleSearch = (selectedKeys, confirm, dataIndex, clearFilters, setSelectedKeys) => {
+  const handleSearch = (
+    selectedKeys: any,
+    confirm: any,
+    dataIndex: any,
+    clearFilters: any,
+    setSelectedKeys: any,
+  ) => {
     dispatch({
       type: 'updateField',
       payload: {
@@ -38,7 +41,7 @@ const useAntdFilterHeader = ({ columns }) => {
     confirm();
   };
 
-  const handleReset = (clearFilters, selectedKeys, dataIndex) => {
+  const handleReset = (clearFilters: any, selectedKeys: any, dataIndex: any) => {
     dispatch({
       type: 'updateField',
       payload: {
@@ -52,7 +55,7 @@ const useAntdFilterHeader = ({ columns }) => {
     columnName = '关键字',
     valueEnum = {},
     valueType = 'text',
-  }) => {
+  }: any) => {
     const filters: any = [];
     forEach(valueEnum, (value: object, key) => {
       filters.push({
@@ -62,17 +65,17 @@ const useAntdFilterHeader = ({ columns }) => {
     });
     const originTableFilterProps = {
       filters,
-      onFilter: (value, record) => {
+      onFilter: () => {
         return '';
       },
       filterSearch: false,
     };
     const newColumnProps = {
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => {
         return (
           <div style={{ padding: 8 }}>
             <Input
-              ref={(node) => {
+              ref={(node: any) => {
                 searchInput = node;
               }}
               placeholder={`搜索${columnName}`}
@@ -106,26 +109,26 @@ const useAntdFilterHeader = ({ columns }) => {
           </div>
         );
       },
-      filterIcon: (filtered) => (
+      filterIcon: (filtered: any) => (
         <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
-      onFilter: (value, record) =>
+      onFilter: (value: any, record: any) =>
         record[dataIndex]
           ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
           : '',
-      onFilterDropdownVisibleChange: (visible) => {
+      onFilterDropdownVisibleChange: (visible: any) => {
         if (visible) {
           setTimeout(() => searchInput.select(), 100);
         }
       },
-      render: (text) => text,
+      render: (text: any) => text,
     };
     return valueType === 'select' ? originTableFilterProps : newColumnProps;
   };
   /** 获取最终改造后的列属性信息* */
   const getColumns = useMemoizedFn((list) => {
-    const trulyColumns = list?.filter((item) => !isEmpty(item));
-    const c = trulyColumns.map((col) => {
+    const trulyColumns = list?.filter((item: any) => !isEmpty(item));
+    const c = trulyColumns.map((col: any) => {
       const param = pick(col, ['dataIndex', 'title', 'valueEnum', 'valueType']);
       const extraColumnProps =
         col.search !== false
@@ -143,7 +146,6 @@ const useAntdFilterHeader = ({ columns }) => {
     return c;
   });
 
-  let searchInput: any = null;
   return {
     filterColumns: getColumns(columns),
     filterState,

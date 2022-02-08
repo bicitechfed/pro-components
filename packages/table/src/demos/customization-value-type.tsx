@@ -1,6 +1,6 @@
 import React, { useContext, useRef, useState } from 'react';
-import type { ProColumns } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import ProProvider from '@ant-design/pro-provider';
 import { Input, Space, Tag } from 'antd';
 

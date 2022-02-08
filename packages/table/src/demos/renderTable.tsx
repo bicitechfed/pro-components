@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Menu, Descriptions } from 'antd';
-import type { ProColumns } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import { MailOutlined } from '@ant-design/icons';
 
 const waitTime = (time: number = 100) => {

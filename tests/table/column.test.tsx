@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import React from 'react';
 import { ConfigProvider } from 'antd';
-import ProTable from '@ant-design/pro-table';
+import ProTable from 'bici-pro-table';
 import { request } from './demo';
 import { waitForComponentToPaint } from '../util';
 import moment from 'moment';

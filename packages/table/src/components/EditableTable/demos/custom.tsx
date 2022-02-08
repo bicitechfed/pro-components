@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import type { ProColumns } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
-import type { ActionType } from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import { EditableProTable } from 'bici-pro-table';
+import type { ActionType } from 'bici-pro-table';
 import ProCard from '@ant-design/pro-card';
 import { Button, Input, Space, Tag, Form } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';

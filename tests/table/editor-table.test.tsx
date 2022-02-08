@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button, Input, InputNumber } from 'antd';
-import type { TableRowEditable, ProColumns, ActionType } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
+import type { TableRowEditable, ProColumns, ActionType } from 'bici-pro-table';
+import { EditableProTable } from 'bici-pro-table';
 import { ProFormText } from '@ant-design/pro-form';
 import useMergedState from 'rc-util/lib/hooks/useMergedState';
 import { mount } from 'enzyme';

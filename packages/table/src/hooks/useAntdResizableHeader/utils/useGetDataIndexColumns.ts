@@ -1,5 +1,5 @@
 import React from 'react';
-import { ColumnOriginType } from '../useAntdResizableHeader';
+import type { ColumnOriginType } from '../useAntdResizableHeader';
 
 export const GETKEY = 'dataIndex';
 
@@ -9,9 +9,10 @@ export function getUniqueId(index: number) {
   return `${ResizableUniqIdPrefix}-${index}`;
 }
 
+// @ts-ignore
 function getColumns<T extends ColumnOriginType<T>>(list: T[] | undefined) {
   const trulyColumns = list;
-  const c = trulyColumns?.map((col, index) => {
+  const c: any = trulyColumns?.map((col, index) => {
     return {
       ...col,
       children: col?.children?.length ? getColumns(col.children) : undefined,

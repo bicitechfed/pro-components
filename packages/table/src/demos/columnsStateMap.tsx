@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { ProColumns, ColumnsState } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumns, ColumnsState } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 
 const valueEnum = {
   0: 'close',

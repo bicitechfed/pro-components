@@ -11,8 +11,8 @@ import ProForm, {
   ProFormDependency,
   ProFormTextArea,
 } from '@ant-design/pro-form';
-import type { ProColumnType } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumnType } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import { useDebounceFn } from '@ant-design/pro-utils';
 import ProCard from '@ant-design/pro-card';
 import { Button } from 'antd';

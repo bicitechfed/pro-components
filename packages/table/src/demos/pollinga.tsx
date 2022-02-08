@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from 'antd';
-import type { ProColumns } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import { LoadingOutlined, ReloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 

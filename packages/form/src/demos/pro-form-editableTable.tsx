@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { message } from 'antd';
 import ProForm, { ProFormText } from '@ant-design/pro-form';
-import type { ProColumns } from '@ant-design/pro-table';
-import { EditableProTable } from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import { EditableProTable } from 'bici-pro-table';
 
 const waitTime = (time: number = 100) => {
   return new Promise((resolve) => {

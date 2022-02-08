@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { Button, Tag, Space, Menu, Dropdown } from 'antd';
-import type { ProColumns, ActionType } from '@ant-design/pro-table';
-import ProTable, { TableDropdown } from '@ant-design/pro-table';
+import type { ProColumns, ActionType } from 'bici-pro-table';
+import ProTable, { TableDropdown } from 'bici-pro-table';
 import request from 'umi-request';
 
 type GithubIssueItem = {

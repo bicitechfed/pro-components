@@ -2,7 +2,7 @@ import React from 'react';
 import { debounce } from 'lodash';
 import { useRef } from 'react';
 import useCreation from './useCreation';
-import { Options } from './options';
+import type { Options } from './options';
 
 type Fn = (...args: any) => any;
 

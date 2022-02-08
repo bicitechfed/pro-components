@@ -1,6 +1,7 @@
 import React from 'react';
-import { useEffect, EffectCallback, DependencyList, useState } from 'react';
-import { Options } from './options';
+import type { EffectCallback, DependencyList } from 'react';
+import { useEffect, useState } from 'react';
+import type { Options } from './options';
 import useThrottleFn from './useThrottleFn';
 import useUpdateEffect from './useUpdateEffect';
 

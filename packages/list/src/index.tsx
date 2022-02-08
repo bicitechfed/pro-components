@@ -1,8 +1,8 @@
 import React, { useMemo, useContext, useRef, useImperativeHandle } from 'react';
 import type { ListProps, PaginationProps } from 'antd';
 import classNames from 'classnames';
-import type { ProTableProps, ProColumnType, ActionType } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProTableProps, ProColumnType, ActionType } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import { ConfigProvider } from 'antd';
 import type { LabelTooltipType } from 'antd/lib/form/FormItemLabel';
 

@@ -1,5 +1,7 @@
-import React, { ThHTMLAttributes } from 'react';
-import { Resizable, ResizeCallbackData } from 'react-resizable';
+import type { ThHTMLAttributes } from 'react';
+import React from 'react';
+import type { ResizeCallbackData } from 'react-resizable';
+import { Resizable } from 'react-resizable';
 import classnames from 'classnames';
 import useSafeState from './utils/useSafeState';
 

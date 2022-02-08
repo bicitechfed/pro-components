@@ -18,6 +18,7 @@ function useLocalColumns<T extends ColumnOriginType<T>>({
   const columnsProp = useGetDataIndexColumns(columns);
 
   // 初始化本地columns
+  // @ts-ignore
   const initLocalColumns = useMemoizedFn(() => {
     const { persistenceType, persistenceKey } = columnsState || {};
 

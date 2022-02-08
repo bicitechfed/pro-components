@@ -26,14 +26,14 @@ ProComponents 是基于 Ant Design 而开发的模板组件，提供了更高级
 当前 ProComponents 每一个组件都是一个独立的包，你需要在你的项目中安装对应的 npm 包并使用。
 
 ```shell
-$ npm i @ant-design/pro-table --save
+$ npm i bici-pro-table --save
 ```
 
 当前 ProComponents 提供了如下组件可直接使用：
 
 - `npm i @ant-design/pro-form --save`
 - `npm i @ant-design/pro-layout --save`
-- `npm i @ant-design/pro-table --save`
+- `npm i bici-pro-table --save`
 - `npm i @ant-design/pro-list --save`
 - `npm i @ant-design/pro-descriptions --save`
 - `npm i @ant-design/pro-card --save`
@@ -64,7 +64,7 @@ export default () => {
 
 ```tsx | pure
 import '@ant-design/pro-form/dist/form.css';
-import '@ant-design/pro-table/dist/table.css';
+import 'bici-pro-table/dist/table.css';
 import '@ant-design/pro-layout/dist/layout.css';
 ```
 

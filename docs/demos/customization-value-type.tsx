@@ -3,7 +3,7 @@ import type { ProFormColumnsType } from '@ant-design/pro-form';
 import { BetaSchemaForm } from '@ant-design/pro-form';
 import ProProvider from '@ant-design/pro-provider';
 import { Input, Space, Tag } from 'antd';
-import ProTable from '@ant-design/pro-table';
+import ProTable from 'bici-pro-table';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import ProCard from '@ant-design/pro-card';
 

@@ -18,6 +18,8 @@ function useMemoizedFn<T extends noop>(fn: T) {
   const memoizedFn = useRef<T>();
   if (!memoizedFn.current) {
     memoizedFn.current = function (...args) {
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-invalid-this
       return fnRef.current.apply(this, args);
     } as T;
   }

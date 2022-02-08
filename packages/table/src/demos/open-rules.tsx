@@ -1,8 +1,8 @@
 import React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Tag, Space } from 'antd';
-import type { ProColumns } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
+import type { ProColumns } from 'bici-pro-table';
+import ProTable from 'bici-pro-table';
 import request from 'umi-request';
 
 type GithubIssueItem = {
