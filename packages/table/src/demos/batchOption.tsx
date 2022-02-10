@@ -135,11 +135,13 @@ export default () => {
   return (
     <ProTable<TableListItem>
       columns={columns}
-      request={async (params = {}) =>
-        request('https://proapi.azurewebsites.net/github/issues', {
+      params={{ a: 1, b: 2 }}
+      request={async (params = {}, sorter = {}, filter = {}) => {
+        console.log(params, sorter, filter);
+        return request('https://proapi.azurewebsites.net/github/issues', {
           params,
-        })
-      }
+        });
+      }}
       rowSelection={{
         // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
         // 注释该行则默认不显示下拉选项

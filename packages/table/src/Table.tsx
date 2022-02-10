@@ -269,7 +269,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alertDom, !!props.editable, tableDom, toolbarDom, filterDom]);
+  }, [alertDom, !!props.editable, tableDom, toolbarDom, filterDom, filterDom]);
 
   /** Table 区域的 dom，为了方便 render */
   const tableAreaDom =
@@ -383,10 +383,16 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     ...rest
   } = props;
 
+  const [proFilter, setProFilter] = useMountMergeState<Record<string, React.ReactText[] | null>>(
+    {},
+  );
+  const [proSort, setProSort] = useMountMergeState<Record<string, SortOrder>>({});
+
   /** Jufeng 表头筛选 ** */
 
   const { filterColumns, filterState, dispatch } = useAntdFilterHeader({
     columns: useMemo(() => columns, []),
+    proFilter,
   });
 
   /** Jufeng 表格头可以放大 ** */
@@ -440,11 +446,6 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     }
     return {};
   });
-
-  const [proFilter, setProFilter] = useMountMergeState<Record<string, React.ReactText[] | null>>(
-    {},
-  );
-  const [proSort, setProSort] = useMountMergeState<Record<string, SortOrder>>({});
 
   /** 设置默认排序和筛选值 */
   useEffect(() => {
@@ -786,14 +787,18 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
         alwaysShowAlert={propsRowSelection?.alwaysShowAlert}
       />
     ) : null;
+
   /** Jufeng 内置的filterDom * */
   const handleFilterTagClear = (key: any) => {
-    console.log('--->>>>proFilter>>>>', filterState[key]);
     if (filterState[key]) {
-      console.log('----clearFilters--');
-      filterState[key].clearFilters();
       filterState[key].setSelectedKeys([]);
+      filterState[key].clearFilters();
     }
+    setProFilter({
+      ...filterState,
+      [key]: null,
+    });
+    action.reload();
     dispatch({
       type: 'updateField',
       payload: {
@@ -806,10 +811,8 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
       handleFilterTagClear(key);
       return null;
     });
-    if (actionRef && actionRef.current) {
-      // @ts-ignore
-      actionRef.current.reset();
-    }
+    setProFilter({});
+    action.reload();
   };
   /** Jufeng 内置的filterDom * */
   const filterDom = useMemo(() => {
@@ -830,7 +833,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
                 onClose={() => handleFilterTagClear(key)}
                 style={{ marginBottom: 8, display: 'inline-block' }}
               >
-                {column.title}：{filterState[key].searchValue[0]}
+                {column.title}：{filterState[key].searchValue?.[0]}
               </Tag>
             );
           }
@@ -843,6 +846,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
       </div>
     );
   }, [filterState]);
+
   return (
     <TableRender
       {...props}

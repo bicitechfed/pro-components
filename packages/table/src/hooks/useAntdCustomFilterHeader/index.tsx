@@ -1,10 +1,8 @@
 import React, { useReducer } from 'react';
 import { Input, Button } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { FunnelPlotFilled } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
-
-const initialFilterState: Record<string, any> = {};
 
 function reducer(state: any, action: any) {
   switch (action.type) {
@@ -20,28 +18,26 @@ function reducer(state: any, action: any) {
 
 const useAntdFilterHeader = ({ columns }: any) => {
   let searchInput: any = null;
-  const [filterState, dispatch] = useReducer(reducer, initialFilterState);
+  const [filterState, dispatch] = useReducer(reducer, {});
+
   const handleSearch = (
     selectedKeys: any,
     confirm: any,
     dataIndex: any,
-    clearFilters: any,
     setSelectedKeys: any,
+    clearFilters: any,
+    searchInputNode: any,
   ) => {
     dispatch({
       type: 'updateField',
       payload: {
-        [dataIndex]: {
-          clearFilters,
-          setSelectedKeys,
-          searchValue: selectedKeys,
-        },
+        [dataIndex]: { searchValue: selectedKeys, setSelectedKeys, clearFilters, searchInputNode },
       },
     });
     confirm();
   };
 
-  const handleReset = (clearFilters: any, selectedKeys: any, dataIndex: any) => {
+  const handleReset = (clearFilters: any, selectedKeys: any, dataIndex: any, confirm: any) => {
     dispatch({
       type: 'updateField',
       payload: {
@@ -49,6 +45,7 @@ const useAntdFilterHeader = ({ columns }: any) => {
       },
     });
     clearFilters();
+    confirm();
   };
   const getColumnSearchProps = ({
     dataIndex,
@@ -79,17 +76,37 @@ const useAntdFilterHeader = ({ columns }: any) => {
                 searchInput = node;
               }}
               placeholder={`搜索${columnName}`}
-              value={selectedKeys[0]}
-              onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              value={filterState[dataIndex]?.searchValue?.[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                dispatch({
+                  type: 'updateField',
+                  payload: {
+                    [dataIndex]: {
+                      searchValue: e.target.value ? [e.target.value] : [],
+                      setSelectedKeys,
+                      clearFilters,
+                      searchInputNode: searchInput,
+                    },
+                  },
+                });
+              }}
               onPressEnter={() =>
-                handleSearch(selectedKeys, confirm, dataIndex, clearFilters, setSelectedKeys)
+                handleSearch(
+                  selectedKeys,
+                  confirm,
+                  dataIndex,
+                  setSelectedKeys,
+                  clearFilters,
+                  searchInput,
+                )
               }
               style={{ marginBottom: 8, display: 'block' }}
             />
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Button
                 type="link"
-                onClick={() => handleReset(clearFilters, selectedKeys, dataIndex)}
+                onClick={() => handleReset(clearFilters, selectedKeys, dataIndex, confirm)}
                 size="small"
                 style={{ width: 50 }}
               >
@@ -98,7 +115,14 @@ const useAntdFilterHeader = ({ columns }: any) => {
               <Button
                 type="primary"
                 onClick={() =>
-                  handleSearch(selectedKeys, confirm, dataIndex, clearFilters, setSelectedKeys)
+                  handleSearch(
+                    selectedKeys,
+                    confirm,
+                    dataIndex,
+                    setSelectedKeys,
+                    clearFilters,
+                    searchInput,
+                  )
                 }
                 size="small"
                 style={{ width: 50 }}
@@ -110,15 +134,17 @@ const useAntdFilterHeader = ({ columns }: any) => {
         );
       },
       filterIcon: (filtered: any) => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        <FunnelPlotFilled style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
-      onFilter: (value: any, record: any) =>
-        record[dataIndex]
-          ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-          : '',
+      // onFilter: (value: any, record: any) =>
+      //   record[dataIndex]
+      //     ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
+      //     : '',
       onFilterDropdownVisibleChange: (visible: any) => {
         if (visible) {
-          setTimeout(() => searchInput.select(), 100);
+          setTimeout(() => {
+            searchInput.select();
+          }, 100);
         }
       },
       render: (text: any) => text,
