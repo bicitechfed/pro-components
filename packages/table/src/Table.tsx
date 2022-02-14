@@ -164,7 +164,6 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
 
     return [...action.dataSource, row];
   };
-
   const getTableProps = () => ({
     ...rest,
     size,
@@ -269,7 +268,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
       </>
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [alertDom, !!props.editable, tableDom, toolbarDom, filterDom, filterDom]);
+  }, [alertDom, !!props.editable, tableDom, toolbarDom, filterDom]);
 
   /** Table 区域的 dom，为了方便 render */
   const tableAreaDom =
@@ -388,24 +387,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
   );
   const [proSort, setProSort] = useMountMergeState<Record<string, SortOrder>>({});
 
-  /** Jufeng 表头筛选 ** */
-
-  const { filterColumns, filterState, dispatch } = useAntdFilterHeader({
-    columns: useMemo(() => columns, []),
-    proFilter,
-  });
-
-  /** Jufeng 表格头可以放大 ** */
-  const { components, resizableColumns } = useARH({
-    columns: useMemo(() => filterColumns, []),
-    // 保存拖拽宽度至本地localStorage
-    columnsState: {
-      persistenceKey: 'localKey',
-      persistenceType: 'sessionStorage',
-    },
-  });
-
-  const propsColumns = [...resizableColumns];
+  let propsColumns: any[] = [];
 
   const className = classNames(defaultClassName, propsClassName);
 
@@ -505,6 +487,26 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     },
   });
   // ============================ END ============================
+
+  /** Jufeng 表头筛选 ** */
+
+  const { filterColumns, filterState, dispatch } = useAntdFilterHeader({
+    columns: useMemo(() => columns, [proFilter]),
+    proFilter,
+    reload: action.reload,
+  });
+
+  /** Jufeng 表格头可以放大 ** */
+  const { components, resizableColumns } = useARH({
+    columns: useMemo(() => filterColumns, []),
+    // 保存拖拽宽度至本地localStorage
+    columnsState: {
+      persistenceKey: 'localKey',
+      persistenceType: 'sessionStorage',
+    },
+  });
+
+  propsColumns = [...resizableColumns];
 
   /** 默认聚焦的时候重新请求数据，这样可以保证数据都是最新的。 */
   useEffect(() => {
@@ -790,13 +792,9 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
 
   /** Jufeng 内置的filterDom * */
   const handleFilterTagClear = (key: any) => {
-    if (filterState[key]) {
-      filterState[key].setSelectedKeys([]);
-      filterState[key].clearFilters();
-    }
     setProFilter({
       ...filterState,
-      [key]: null,
+      [key]: [],
     });
     action.reload();
     dispatch({
@@ -833,7 +831,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
                 onClose={() => handleFilterTagClear(key)}
                 style={{ marginBottom: 8, display: 'inline-block' }}
               >
-                {column.title}：{filterState[key].searchValue?.[0]}
+                {column.title}：{filterState[key]?.join(',')}
               </Tag>
             );
           }
