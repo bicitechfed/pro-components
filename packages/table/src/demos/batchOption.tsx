@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button, DatePicker, Space, Table } from 'antd';
 import type { ProColumns } from 'bici-pro-table';
 import ProTable from 'bici-pro-table';
@@ -51,97 +51,102 @@ for (let i = 0; i < 5; i += 1) {
 }
 
 export default () => {
-  const [filtered, setFiltered] = useState<any>({});
-  const columns: ProColumns<TableListItem>[] = [
-    {
-      key: 'name',
-      title: '应用名称',
-      width: 120,
-      dataIndex: 'name',
-      fixed: 'left',
-      filteredValue: filtered['name'],
-      render: (_) => <a>{_}aaa</a>,
-    },
-    {
-      title: '容器数量',
-      width: 120,
-      dataIndex: 'containers',
-      key: 'containers',
-      align: 'right',
-      search: false,
-      filteredValue: filtered['containers'],
-      sorter: (a, b) => a.containers - b.containers,
-    },
-    {
-      title: '调用次数',
-      width: 120,
-      align: 'right',
-      dataIndex: 'callNumber',
-      key: 'callNumber',
-      filters: true,
-      filteredValue: filtered['callNumber'],
-      onFilter: true,
-      valueType: 'date',
-    },
-    {
-      title: '执行进度',
-      dataIndex: 'progress',
-      key: 'progress',
-      filteredValue: filtered['progress'],
-      valueType: (item) => ({
-        type: 'progress',
-        status: ProcessMap[item.status],
-      }),
-    },
-    {
-      title: '创建者',
-      width: 300,
-      filters: true,
-      onFilter: true,
-      dataIndex: 'creator',
-      key: 'creator',
-      valueType: 'select',
-      filterIcon: (filtered) => (
-        <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
-      valueEnum: {
-        all: { text: '全部' },
-        付小小: { text: '付小小' },
-        曲丽丽: { text: '曲丽丽' },
-        林东东: { text: '林东东' },
-        陈帅帅: { text: '陈帅帅' },
-        兼某某: { text: '兼某某' },
+  const [filtered, setFiltered] = useState<any>({
+    name: ['majy'],
+  });
+  const columns: ProColumns<TableListItem>[] = useMemo(
+    () => [
+      {
+        key: 'name',
+        title: '应用名称',
+        width: 120,
+        dataIndex: 'name',
+        fixed: 'left',
+        filters: false,
+        render: (_) => <a>{_}aaa</a>,
       },
-    },
-    {
-      title: '创建时间',
-      width: 140,
-      key: 'since',
-      dataIndex: 'createdAt',
-      valueType: 'date',
-      sorter: (a, b) => a.createdAt - b.createdAt,
-      renderFormItem: () => {
-        return <RangePicker />;
+      {
+        title: '容器数量',
+        width: 120,
+        dataIndex: 'containers',
+        key: 'containers',
+        align: 'right',
+        search: false,
+        filteredValue: filtered['containers'],
+        sorter: (a, b) => a.containers - b.containers,
       },
-    },
-    {
-      title: '备注',
-      dataIndex: 'memo',
-      key: 'memo',
-      ellipsis: true,
-      copyable: true,
-      search: false,
-    },
-    {
-      title: '操作',
-      width: 80,
-      key: 'option',
-      valueType: 'option',
-      fixed: 'right',
-      search: false,
-      render: () => [<a key="link">链路</a>],
-    },
-  ];
+      {
+        title: '调用次数',
+        width: 120,
+        align: 'right',
+        dataIndex: 'callNumber',
+        key: 'callNumber',
+        filters: true,
+        filteredValue: filtered['callNumber'],
+        onFilter: true,
+        valueType: 'date',
+      },
+      {
+        title: '执行进度',
+        dataIndex: 'progress',
+        key: 'progress',
+        filteredValue: filtered['progress'],
+        valueType: (item) => ({
+          type: 'progress',
+          status: ProcessMap[item.status],
+        }),
+      },
+      {
+        title: '创建者',
+        width: 300,
+        filters: true,
+        onFilter: true,
+        dataIndex: 'creator',
+        key: 'creator',
+        valueType: 'select',
+        filterIcon: (filtered) => (
+          <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        valueEnum: {
+          all: { text: '全部' },
+          付小小: { text: '付小小' },
+          曲丽丽: { text: '曲丽丽' },
+          林东东: { text: '林东东' },
+          陈帅帅: { text: '陈帅帅' },
+          兼某某: { text: '兼某某' },
+        },
+      },
+      {
+        title: '创建时间',
+        width: 140,
+        key: 'since',
+        dataIndex: 'createdAt',
+        valueType: 'date',
+        sorter: (a, b) => a.createdAt - b.createdAt,
+        renderFormItem: () => {
+          return <RangePicker />;
+        },
+      },
+      {
+        title: '备注',
+        dataIndex: 'memo',
+        key: 'memo',
+        ellipsis: true,
+        copyable: true,
+        search: false,
+      },
+      {
+        title: '操作',
+        width: 80,
+        key: 'option',
+        valueType: 'option',
+        fixed: 'right',
+        search: false,
+        render: () => [<a key="link">链路</a>],
+      },
+    ],
+    [setFiltered],
+  );
   return (
     <ProTable<TableListItem>
       columns={columns}

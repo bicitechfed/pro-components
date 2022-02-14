@@ -40,6 +40,7 @@ import {
   useActionType,
   isBordered,
   parseDefaultColumnConfig,
+  parseDataIndex,
 } from './utils';
 import { genProColumnToColumn } from './utils/genProColumnToColumn';
 
@@ -337,6 +338,7 @@ function TableRender<T extends Record<string, any>, U, ValueType>(
   );
 }
 /** ++++++++++++++++TableRender end+++++++++++++++* */
+
 const emptyObj = {};
 const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType>(
   props: ProTableProps<T, U, ValueType> & {
@@ -493,6 +495,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
   const { filterColumns, filterState, dispatch } = useAntdFilterHeader({
     columns: useMemo(() => columns, [proFilter]),
     proFilter,
+    proSort,
     reload: action.reload,
   });
 
@@ -506,7 +509,14 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     },
   });
 
-  propsColumns = [...resizableColumns];
+  /** 列改为受控模式 */
+  propsColumns = (resizableColumns || []).map((column) => {
+    return {
+      ...column,
+      filteredValue: filterState[column.dataIndex] || null,
+      defaultFilteredValue: filterState[column.dataIndex] || null,
+    };
+  });
 
   /** 默认聚焦的时候重新请求数据，这样可以保证数据都是最新的。 */
   useEffect(() => {

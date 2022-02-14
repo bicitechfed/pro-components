@@ -1,8 +1,10 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { Input, Button } from 'antd';
 import { FunnelPlotFilled } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
+
+const valueTypes = ['select'];
 
 function reducer(state: any, action: any) {
   switch (action.type) {
@@ -16,24 +18,24 @@ function reducer(state: any, action: any) {
   }
 }
 
-const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
+const useAntdFilterHeader = ({ columns, proFilter, reload, proSort }: any) => {
   let searchInput: any = null;
   let onReset: any = null;
   const [filterState, dispatch] = useReducer(reducer, {});
 
-  console.log(proFilter);
-
-  // useEffect(()=>{
-  //   Object.keys(proFilter).map(item=>{
-  //     dispatch({
-  //       type: 'updateField',
-  //       payload: {
-  //         [item]: proFilter[item],
-  //       },
-  //     });
-  //     return null;
-  //   })
-  // },[])
+  useEffect(() => {
+    columns.map((column: any) => {
+      if (column['defaultFilteredValue']) {
+        dispatch({
+          type: 'updateField',
+          payload: {
+            [column.dataIndex]: column['defaultFilteredValue'],
+          },
+        });
+      }
+      return null;
+    });
+  }, []);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
     dispatch({
@@ -57,6 +59,7 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
     confirm();
     reload();
   };
+  /** 自定义列筛选* */
   const getColumnSearchProps = ({
     dataIndex,
     columnName = '关键字',
@@ -137,13 +140,15 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
         }
       },
     };
-    return valueType === 'select' ? originTableFilterProps : newColumnProps;
+    return valueTypes.some((currentValue) => valueType === currentValue)
+      ? originTableFilterProps
+      : newColumnProps;
   };
   /** 获取最终改造后的列属性信息* */
   const getColumns = useMemoizedFn((list) => {
     const trulyColumns = list?.filter((item: any) => !isEmpty(item));
     const c = trulyColumns.map((col: any) => {
-      const param = pick(col, ['dataIndex', 'title', 'valueEnum', 'valueType']);
+      const param = pick(col, ['dataIndex', 'title', 'valueEnum', 'valueType', 'filteredValue']);
       const extraColumnProps =
         col.search !== false
           ? getColumnSearchProps({

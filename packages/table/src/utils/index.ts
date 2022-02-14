@@ -13,6 +13,7 @@ import type {
   ProColumnType,
   UseFetchDataAction,
 } from '../typing';
+import exp from 'constants';
 
 /**
  * 检查值是否存在 为了 避开 0 和 false
@@ -165,7 +166,7 @@ export const genColumnKey = (key?: React.ReactText | undefined, index?: number):
  *
  * @param dataIndex Column 中的 dataIndex
  */
-function parseDataIndex(dataIndex: ProColumnType['dataIndex']): string | undefined {
+export function parseDataIndex(dataIndex: ProColumnType['dataIndex']): string | undefined {
   if (Array.isArray(dataIndex)) {
     return dataIndex.join(',');
   }
