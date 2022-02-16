@@ -1,10 +1,17 @@
 import React, { useReducer, useEffect } from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, DatePicker } from 'antd';
 import { FunnelPlotFilled } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
+import moment, { Moment } from 'moment';
+
+const { RangePicker } = DatePicker;
 
 const valueTypes = ['select'];
+
+export declare type EventValue<DateType> = DateType | null;
+export declare type RangeValue<DateType> = [EventValue<DateType>, EventValue<DateType>] | null;
+type RangeDateType = [EventValue<Moment>, EventValue<Moment>];
 
 function reducer(state: any, action: any) {
   switch (action.type) {
@@ -18,7 +25,7 @@ function reducer(state: any, action: any) {
   }
 }
 
-const useAntdFilterHeader = ({ columns, proFilter, reload, proSort }: any) => {
+const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
   let searchInput: any = null;
   let onReset: any = null;
   const [filterState, dispatch] = useReducer(reducer, {});
@@ -59,6 +66,100 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, proSort }: any) => {
     confirm();
     reload();
   };
+
+  const handleDataChange = (date: any, dateString: any, setSelectedKeys: any) => {
+    setSelectedKeys([dateString]);
+  };
+
+  // 专门处理日期筛选dom
+  const dateDom = (setSelectedKeys: any, selectedKeys: string[]) => {
+    let value = null;
+    let rangeValue: RangeDateType = [null, null];
+    if (typeof selectedKeys[0] === 'string') {
+      value = moment(selectedKeys[0]);
+    } else {
+      rangeValue = selectedKeys[0]
+        ? [moment(selectedKeys[0][0]), moment(selectedKeys[0][1])]
+        : [null, null];
+    }
+    return {
+      date: (
+        <DatePicker
+          showToday
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateTime: (
+        <DatePicker
+          showTime
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateWeek: (
+        <DatePicker
+          picker="week"
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateMonth: (
+        <DatePicker
+          picker="month"
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateQuarter: (
+        <DatePicker
+          picker="quarter"
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateYear: (
+        <DatePicker
+          picker="year"
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateRange: (
+        <RangePicker
+          value={rangeValue}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      dateTimeRange: (
+        <RangePicker
+          showTime
+          value={rangeValue}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+      time: (
+        <DatePicker
+          picker="time"
+          value={value}
+          onChange={(date, dateString) => handleDataChange(date, dateString, setSelectedKeys)}
+        />
+      ),
+    };
+  };
+
+  const dateValueTypes = [
+    'date',
+    'dateTime',
+    'dateWeek',
+    'dateMonth',
+    'dateQuarter',
+    'dateYear',
+    'dateRange',
+    'dateTimeRange',
+    'time',
+  ];
+
   /** 自定义列筛选* */
   const getColumnSearchProps = ({
     dataIndex,
@@ -75,6 +176,7 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, proSort }: any) => {
     });
     const originTableFilterProps = {
       filters,
+      filterSearch: true,
       filterIcon: (filtered: any) => (
         <FunnelPlotFilled style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
@@ -92,17 +194,6 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, proSort }: any) => {
               value={selectedKeys?.[0]}
               onChange={(e) => {
                 setSelectedKeys(e.target.value ? [e.target.value] : []);
-                // dispatch({
-                //   type: 'updateField',
-                //   payload: {
-                //     [dataIndex]: {
-                //       searchValue: e.target.value ? [e.target.value] : [],
-                //       setSelectedKeys,
-                //       clearFilters,
-                //       searchInputNode: searchInput,
-                //     },
-                //   },
-                // });
               }}
               onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
               style={{ marginBottom: 8, display: 'block' }}
@@ -135,11 +226,56 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, proSort }: any) => {
       onFilterDropdownVisibleChange: (visible: any) => {
         if (visible) {
           setTimeout(() => {
-            searchInput.select();
+            if (searchInput) {
+              searchInput.select();
+            }
           }, 100);
         }
       },
     };
+
+    if (dateValueTypes.some((type) => type === valueType)) {
+      newColumnProps['filterDropdown'] = ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }: any) => {
+        onReset = clearFilters;
+        return (
+          <div style={{ padding: 8 }}>
+            {dateDom(setSelectedKeys, selectedKeys)[valueType]}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}
+            >
+              <Button
+                type="link"
+                onClick={() => handleReset(clearFilters, selectedKeys, dataIndex, confirm)}
+                size="small"
+                disabled={!selectedKeys || selectedKeys.length === 0}
+                style={{ width: 50 }}
+              >
+                重置
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                size="small"
+                style={{ width: 50 }}
+              >
+                确定
+              </Button>
+            </div>
+          </div>
+        );
+      };
+    }
+
     return valueTypes.some((currentValue) => valueType === currentValue)
       ? originTableFilterProps
       : newColumnProps;

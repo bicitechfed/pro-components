@@ -57,19 +57,19 @@ export default () => {
   const columns: ProColumns<TableListItem>[] = useMemo(
     () => [
       {
-        key: 'name',
+        key: 'title',
         title: '应用名称',
         width: 120,
-        dataIndex: 'name',
+        dataIndex: 'title',
         fixed: 'left',
-        filters: false,
-        render: (_) => <a>{_}aaa</a>,
+        valueType: 'text',
+        render: (_) => <a>{_}</a>,
       },
       {
         title: '容器数量',
         width: 120,
-        dataIndex: 'containers',
-        key: 'containers',
+        dataIndex: 'number',
+        key: 'number',
         align: 'right',
         search: false,
         filteredValue: filtered['containers'],
@@ -79,16 +79,15 @@ export default () => {
         title: '调用次数',
         width: 120,
         align: 'right',
-        dataIndex: 'callNumber',
-        key: 'callNumber',
+        dataIndex: 'comments',
+        key: 'comments',
         filters: true,
-        filteredValue: filtered['callNumber'],
+        filteredValue: filtered['comments'],
         onFilter: true,
-        valueType: 'date',
       },
       {
         title: '执行进度',
-        dataIndex: 'progress',
+        dataIndex: 'comments',
         key: 'progress',
         filteredValue: filtered['progress'],
         valueType: (item) => ({
@@ -101,8 +100,8 @@ export default () => {
         width: 300,
         filters: true,
         onFilter: true,
-        dataIndex: 'creator',
-        key: 'creator',
+        dataIndex: 'user',
+        key: 'user',
         valueType: 'select',
         filterIcon: (filtered) => (
           <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
@@ -119,10 +118,9 @@ export default () => {
       {
         title: '创建时间',
         width: 140,
-        key: 'since',
-        dataIndex: 'createdAt',
-        valueType: 'date',
-        sorter: (a, b) => a.createdAt - b.createdAt,
+        key: 'created_at',
+        dataIndex: 'created_at',
+        valueType: 'dateRange',
         renderFormItem: () => {
           return <RangePicker />;
         },
@@ -131,9 +129,9 @@ export default () => {
         title: '备注',
         dataIndex: 'memo',
         key: 'memo',
+        valueType: 'dateRange',
         ellipsis: true,
         copyable: true,
-        search: false,
       },
       {
         title: '操作',
@@ -162,26 +160,8 @@ export default () => {
         // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
         // 注释该行则默认不显示下拉选项
         selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
-        defaultSelectedRowKeys: [1],
+        defaultSelectedRowKeys: [],
       }}
-      tableAlertRender={({ selectedRowKeys, selectedRows, onCleanSelected }) => (
-        <Space size={24}>
-          <span>
-            已选 {selectedRowKeys.length} 项
-            <a style={{ marginLeft: 8 }} onClick={onCleanSelected}>
-              取消选择
-            </a>
-          </span>
-          <span>{`容器数量: ${selectedRows.reduce(
-            (pre, item) => pre + item.containers,
-            0,
-          )} 个`}</span>
-          <span>{`调用量: ${selectedRows.reduce(
-            (pre, item) => pre + item.callNumber,
-            0,
-          )} 次`}</span>
-        </Space>
-      )}
       tableAlertOptionRender={() => {
         return (
           <Space size={16}>
@@ -190,7 +170,6 @@ export default () => {
           </Space>
         );
       }}
-      dataSource={tableListDataSource}
       scroll={{ x: 1300 }}
       search={false}
       rowKey="key"
