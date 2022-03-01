@@ -834,6 +834,23 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
             return null;
           } else {
             const column = columns?.filter((c) => c.dataIndex === key)[0] || {};
+            let showText = filterState[key]?.join(',');
+            // @ts-ignore
+            if (
+              column.fieldProps &&
+              column.fieldProps.options &&
+              column.fieldProps.options.length > 0
+            ) {
+              const a = (filterState[key] || []).map((k: string) => {
+                // @ts-ignore
+                const t = column.fieldProps.options.filter((item) => item.value === k);
+                if (t && t.length > 0) {
+                  return t[0].label;
+                }
+                return '';
+              });
+              showText = a.join(',');
+            }
             return (
               <Tag
                 key={key}
@@ -841,7 +858,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
                 onClose={() => handleFilterTagClear(key)}
                 style={{ marginBottom: 8, display: 'inline-block' }}
               >
-                {column.title}：{filterState[key]?.join(',')}
+                {column.title}：{showText}
               </Tag>
             );
           }

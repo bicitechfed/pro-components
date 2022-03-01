@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { createRef, useEffect, useMemo, useState } from 'react';
 import { Button, DatePicker, Space, Table } from 'antd';
 import type { ProColumns } from 'bici-pro-table';
-import ProTable from 'bici-pro-table';
+import ProTable, { ActionType } from 'bici-pro-table';
 import { SearchOutlined } from '@ant-design/icons';
 import request from 'umi-request';
+import { ProFieldRequestData, RequestOptionsType } from '@ant-design/pro-utils';
 
 const { RangePicker } = DatePicker;
 
@@ -54,6 +55,52 @@ export default () => {
   const [filtered, setFiltered] = useState<any>({
     name: ['majy'],
   });
+  const tableRef = createRef<ActionType>();
+  const [opts, setOpts] = useState([
+    {
+      label: 'item 1',
+      value: 'a',
+    },
+    {
+      label: 'item 2',
+      value: 'b',
+    },
+    {
+      label: 'item 3',
+      value: 'c',
+    },
+  ]);
+
+  const requestStateMap: ProFieldRequestData = async () => {
+    let data: RequestOptionsType[] = [];
+    return request
+      .get('https://proapi.azurewebsites.net/github/issues')
+      .then(function (response) {
+        if (response && response.data) {
+          response.data.map((item: any) => {
+            data.push({
+              label: item.title,
+              value: item.id,
+            });
+          });
+        }
+        console.log('>>>>column request>>>', response);
+        setOpts(data);
+        return data;
+      })
+      .catch(function (error) {
+        console.log(error);
+        return data;
+      });
+  };
+
+  const handleSetOption = async () => {
+    requestStateMap({}, {});
+  };
+  useEffect(() => {
+    handleSetOption();
+  }, []);
+
   const columns: ProColumns<TableListItem>[] = useMemo(
     () => [
       {
@@ -77,7 +124,7 @@ export default () => {
       },
       {
         title: '调用次数',
-        width: 120,
+        width: 200,
         align: 'right',
         dataIndex: 'comments',
         key: 'comments',
@@ -87,13 +134,35 @@ export default () => {
       },
       {
         title: '执行进度',
-        dataIndex: 'comments',
+        dataIndex: 'progress',
         key: 'progress',
         filteredValue: filtered['progress'],
         valueType: (item) => ({
           type: 'progress',
           status: ProcessMap[item.status],
         }),
+      },
+      {
+        title: '远程获取数据',
+        dataIndex: 'test',
+        key: 'test',
+        valueType: 'select',
+        filters: true,
+        onFilter: true,
+        width: 100,
+        defaultFilteredValue: [624748504],
+        // request:requestStateMap,
+        valueEnum: {
+          all: { text: '全部' },
+          付小小: { text: '付小小' },
+          曲丽丽: { text: '曲丽丽' },
+          林东东: { text: '林东东' },
+          陈帅帅: { text: '陈帅帅' },
+          兼某某: { text: '兼某某' },
+        },
+        fieldProps: {
+          options: opts,
+        },
       },
       {
         title: '创建者',
@@ -103,9 +172,7 @@ export default () => {
         dataIndex: 'user',
         key: 'user',
         valueType: 'select',
-        filterIcon: (filtered) => (
-          <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
-        ),
+        filterMultiple: false,
         valueEnum: {
           all: { text: '全部' },
           付小小: { text: '付小小' },
@@ -143,10 +210,11 @@ export default () => {
         render: () => [<a key="link">链路</a>],
       },
     ],
-    [setFiltered],
+    [setFiltered, opts, setOpts],
   );
   return (
     <ProTable<TableListItem>
+      actionRef={tableRef}
       columns={columns}
       params={{ a: 1, b: 2 }}
       request={async (params = {}, sorter = {}, filter = {}) => {
@@ -170,11 +238,15 @@ export default () => {
           </Space>
         );
       }}
-      scroll={{ x: 1300 }}
+      scroll={{ x: 1900 }}
       search={false}
       rowKey="key"
       headerTitle="批量操作"
-      toolBarRender={() => [<Button key="show">查看日志</Button>]}
+      toolBarRender={() => [
+        <Button key="show" onClick={handleSetOption}>
+          查看日志
+        </Button>,
+      ]}
     />
   );
 };

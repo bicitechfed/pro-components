@@ -29,7 +29,6 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
   let searchInput: any = null;
   let onReset: any = null;
   const [filterState, dispatch] = useReducer(reducer, {});
-
   useEffect(() => {
     columns.map((column: any) => {
       if (column['defaultFilteredValue']) {
@@ -166,6 +165,8 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
     columnName = '关键字',
     valueEnum = {},
     valueType = 'text',
+    fieldProps,
+    request,
   }: any) => {
     const filters: any = [];
     forEach(valueEnum, (value: object, key) => {
@@ -174,9 +175,30 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
         value: key,
       });
     });
+    if (fieldProps && fieldProps.options) {
+      filters.length = 0;
+      forEach(fieldProps.options, (item: any) => {
+        filters.push({
+          text: item.label || item.text,
+          value: item.value,
+        });
+      });
+    }
     const originTableFilterProps = {
       filters,
       filterSearch: true,
+      onFilterDropdownVisibleChange: async (visible: boolean) => {
+        if (visible && request && typeof request === 'function') {
+          const data = await request();
+          filters.length = 0;
+          forEach(data, (item: any) => {
+            filters.push({
+              text: item.label || item.text,
+              value: item.value,
+            });
+          });
+        }
+      },
       filterIcon: (filtered: any) => (
         <FunnelPlotFilled style={{ color: filtered ? '#1890ff' : undefined }} />
       ),
@@ -284,7 +306,15 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
   const getColumns = useMemoizedFn((list) => {
     const trulyColumns = list?.filter((item: any) => !isEmpty(item));
     const c = trulyColumns.map((col: any) => {
-      const param = pick(col, ['dataIndex', 'title', 'valueEnum', 'valueType', 'filteredValue']);
+      const param = pick(col, [
+        'dataIndex',
+        'title',
+        'valueEnum',
+        'valueType',
+        'filteredValue',
+        'fieldProps',
+        'request',
+      ]);
       const extraColumnProps =
         col.search !== false
           ? getColumnSearchProps({
