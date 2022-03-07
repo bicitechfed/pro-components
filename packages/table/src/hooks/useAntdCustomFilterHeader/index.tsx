@@ -177,7 +177,7 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
       digit: (
         <>
           <InputNumber
-            defaultValue={selectedKeys[1]}
+            value={selectedKeys?.[0]}
             style={{ width: '100%' }}
             onChange={(value) => setSelectedKeys([value])}
           />
