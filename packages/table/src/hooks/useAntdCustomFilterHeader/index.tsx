@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from 'react';
-import { Input, Button, DatePicker } from 'antd';
+import { Input, Button, DatePicker, InputNumber } from 'antd';
 import { FunnelPlotFilled } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
@@ -25,13 +25,15 @@ function reducer(state: any, action: any) {
   }
 }
 
-const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
+const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) => {
   let searchInput: any = null;
   let onReset: any = null;
   const [filterState, dispatch] = useReducer(reducer, {});
   useEffect(() => {
+    const t = {};
     columns.map((column: any) => {
       if (column['defaultFilteredValue']) {
+        t[column.dataIndex] = column['defaultFilteredValue'];
         dispatch({
           type: 'updateField',
           payload: {
@@ -41,6 +43,8 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
       }
       return null;
     });
+    // 解决初始化筛选值不再过滤对象中的bug
+    setProFilter(t);
   }, []);
 
   const handleSearch = (selectedKeys: any, confirm: any, dataIndex: any) => {
@@ -147,6 +151,41 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
     };
   };
 
+  /** 专门处理数字输入框 * */
+  const digitDom = (setSelectedKeys: any, selectedKeys: number[]) => {
+    const handleDigitValues = (type: string, value: number) => {
+      if (type === 'min' && selectedKeys) {
+        setSelectedKeys([value, selectedKeys?.[1]]);
+      } else if (selectedKeys) {
+        setSelectedKeys([selectedKeys?.[0], value]);
+      }
+    };
+    return {
+      digitRange: (
+        <>
+          <InputNumber
+            value={selectedKeys?.[0]}
+            onChange={(value) => handleDigitValues('min', value)}
+          />
+          ~
+          <InputNumber
+            value={selectedKeys?.[1]}
+            onChange={(value) => handleDigitValues('max', value)}
+          />
+        </>
+      ),
+      digit: (
+        <>
+          <InputNumber
+            defaultValue={selectedKeys[1]}
+            style={{ width: '100%' }}
+            onChange={(value) => setSelectedKeys([value])}
+          />
+        </>
+      ),
+    };
+  };
+
   const dateValueTypes = [
     'date',
     'dateTime',
@@ -158,6 +197,8 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
     'dateTimeRange',
     'time',
   ];
+
+  const digitValueTypes = ['digit', 'digitRange'];
 
   /** 自定义列筛选* */
   const getColumnSearchProps = ({
@@ -267,6 +308,47 @@ const useAntdFilterHeader = ({ columns, proFilter, reload }: any) => {
         return (
           <div style={{ padding: 8 }}>
             {dateDom(setSelectedKeys, selectedKeys)[valueType]}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}
+            >
+              <Button
+                type="link"
+                onClick={() => handleReset(clearFilters, selectedKeys, dataIndex, confirm)}
+                size="small"
+                disabled={!selectedKeys || selectedKeys.length === 0}
+                style={{ width: 50 }}
+              >
+                重置
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                size="small"
+                style={{ width: 50 }}
+              >
+                确定
+              </Button>
+            </div>
+          </div>
+        );
+      };
+    }
+    if (digitValueTypes.some((type) => type === valueType)) {
+      newColumnProps['filterDropdown'] = ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }: any) => {
+        onReset = clearFilters;
+        return (
+          <div style={{ padding: 8 }}>
+            {digitDom(setSelectedKeys, selectedKeys)[valueType]}
             <div
               style={{
                 display: 'flex',

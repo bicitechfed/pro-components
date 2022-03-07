@@ -109,7 +109,7 @@ export default () => {
         width: 120,
         dataIndex: 'title',
         fixed: 'left',
-        valueType: 'text',
+        valueType: 'digit',
         render: (_) => <a>{_}</a>,
       },
       {
@@ -247,6 +247,9 @@ export default () => {
           查看日志
         </Button>,
       ]}
+      onRequestError={(e) => {
+        console.log('error', e);
+      }}
     />
   );
 };

@@ -497,6 +497,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
     proFilter,
     proSort,
     reload: action.reload,
+    setProFilter,
   });
 
   /** Jufeng 表格头可以放大 ** */
