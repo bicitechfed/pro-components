@@ -1,13 +1,22 @@
-import React, { useReducer, useEffect } from 'react';
-import { Input, Button, DatePicker, InputNumber } from 'antd';
+import React, { useReducer, useEffect, useState } from 'react';
+import {
+  Input,
+  Button,
+  DatePicker,
+  InputNumber,
+  Select,
+  SelectProps,
+  TreeSelect,
+  TreeSelectProps,
+} from 'antd';
 import { FunnelPlotFilled } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
 import moment, { Moment } from 'moment';
+import { type } from 'os';
 
 const { RangePicker } = DatePicker;
-
-const valueTypes = ['select'];
+const { Option } = Select;
 
 export declare type EventValue<DateType> = DateType | null;
 export declare type RangeValue<DateType> = [EventValue<DateType>, EventValue<DateType>] | null;
@@ -24,6 +33,62 @@ function reducer(state: any, action: any) {
       throw new Error();
   }
 }
+
+interface RenderSelectDomProps {
+  setSelectedKeys: any;
+  selectedKeys: any;
+  filters: any;
+  fieldProps: any;
+  request: any;
+}
+
+/**
+ * 渲染下拉选
+ *
+ * @class
+ *
+ * @param setSelectedKeys
+ * @param selectedKeys
+ * @param filters
+ * @param fieldProps
+ * @param request
+ */
+const RenderSelectDom = ({
+  setSelectedKeys,
+  selectedKeys,
+  filters,
+  fieldProps,
+  request,
+}: RenderSelectDomProps) => {
+  const [options, setOptions] = useState(filters);
+  const fetchOptions = async () => {
+    if (typeof request == 'function') {
+      const data = await request();
+      setOptions(data);
+    }
+  };
+  useEffect(() => {
+    fetchOptions();
+  }, []);
+
+  const handleSelect = (c: any, o: any) => {
+    if (Array.isArray(c)) {
+      setSelectedKeys(c);
+    } else {
+      setSelectedKeys([c]);
+    }
+  };
+
+  return (
+    <Select
+      {...fieldProps}
+      value={selectedKeys}
+      style={{ width: '100%' }}
+      options={options}
+      onChange={handleSelect}
+    />
+  );
+};
 
 const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) => {
   let searchInput: any = null;
@@ -225,25 +290,26 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
         });
       });
     }
-    const originTableFilterProps = {
-      filters,
-      filterSearch: true,
-      onFilterDropdownVisibleChange: async (visible: boolean) => {
-        if (visible && request && typeof request === 'function') {
-          const data = await request();
-          filters.length = 0;
-          forEach(data, (item: any) => {
-            filters.push({
-              text: item.label || item.text,
-              value: item.value,
-            });
-          });
-        }
-      },
-      filterIcon: (filtered: any) => (
-        <FunnelPlotFilled style={{ color: filtered ? '#1890ff' : undefined }} />
-      ),
-    };
+    // 原生的下拉选有问题
+    // const originTableFilterProps = {
+    //   filters,
+    //   filterSearch: true,
+    //   onFilterDropdownVisibleChange: async (visible: boolean) => {
+    //     if (visible && request && typeof request === 'function') {
+    //       const data = await request();
+    //       filters.length = 0;
+    //       forEach(data, (item: any) => {
+    //         filters.push({
+    //           text: item.label || item.text,
+    //           value: item.value,
+    //         });
+    //       });
+    //     }
+    //   },
+    //   filterIcon: (filtered: any) => (
+    //     <FunnelPlotFilled style={{ color: filtered ? '#1890ff' : undefined }} />
+    //   ),
+    // };
     const newColumnProps = {
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => {
         onReset = clearFilters;
@@ -380,9 +446,55 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
       };
     }
 
-    return valueTypes.some((currentValue) => valueType === currentValue)
-      ? originTableFilterProps
-      : newColumnProps;
+    if (valueType === 'select') {
+      newColumnProps['filterDropdown'] = ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }: any) => {
+        onReset = clearFilters;
+        return (
+          <div style={{ padding: 8 }}>
+            <RenderSelectDom
+              setSelectedKeys={setSelectedKeys}
+              selectedKeys={selectedKeys}
+              filters={filters}
+              fieldProps={fieldProps}
+              request={request}
+            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 8,
+              }}
+            >
+              <Button
+                type="link"
+                onClick={() => handleReset(clearFilters, selectedKeys, dataIndex, confirm)}
+                size="small"
+                disabled={!selectedKeys || selectedKeys.length === 0}
+                style={{ width: 50 }}
+              >
+                重置
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                size="small"
+                style={{ width: 50 }}
+              >
+                确定
+              </Button>
+            </div>
+          </div>
+        );
+      };
+    }
+
+    return newColumnProps;
   };
   /** 获取最终改造后的列属性信息* */
   const getColumns = useMemoizedFn((list) => {

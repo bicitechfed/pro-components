@@ -56,20 +56,7 @@ export default () => {
     name: ['majy'],
   });
   const tableRef = createRef<ActionType>();
-  const [opts, setOpts] = useState([
-    {
-      label: 'item 1',
-      value: 'a',
-    },
-    {
-      label: 'item 2',
-      value: 'b',
-    },
-    {
-      label: 'item 3',
-      value: 'c',
-    },
-  ]);
+  const [opts, setOpts] = useState([]);
 
   const requestStateMap: ProFieldRequestData = async () => {
     let data: RequestOptionsType[] = [];
@@ -85,7 +72,7 @@ export default () => {
           });
         }
         console.log('>>>>column request>>>', response);
-        setOpts(data);
+        // setOpts(data);
         return data;
       })
       .catch(function (error) {
@@ -95,7 +82,9 @@ export default () => {
   };
 
   const handleSetOption = async () => {
-    requestStateMap({}, {});
+    requestStateMap({}, {}).then((res) => {
+      setOpts(res);
+    });
   };
   useEffect(() => {
     handleSetOption();
@@ -162,6 +151,8 @@ export default () => {
         },
         fieldProps: {
           options: opts,
+          mode: 'multiple',
+          dropdownStyle: { width: 200 },
         },
       },
       {
