@@ -1,22 +1,11 @@
 import React, { useReducer, useEffect, useState } from 'react';
-import {
-  Input,
-  Button,
-  DatePicker,
-  InputNumber,
-  Select,
-  SelectProps,
-  TreeSelect,
-  TreeSelectProps,
-} from 'antd';
+import { Input, Button, DatePicker, InputNumber, Select } from 'antd';
 import { FunnelPlotFilled } from '@ant-design/icons';
 import useMemoizedFn from '../useAntdResizableHeader/utils/useMemoizedFn';
 import { isEmpty, pick, forEach } from 'lodash';
 import moment, { Moment } from 'moment';
-import { type } from 'os';
 
 const { RangePicker } = DatePicker;
-const { Option } = Select;
 
 export declare type EventValue<DateType> = DateType | null;
 export declare type RangeValue<DateType> = [EventValue<DateType>, EventValue<DateType>] | null;
@@ -71,7 +60,7 @@ const RenderSelectDom = ({
     fetchOptions();
   }, []);
 
-  const handleSelect = (c: any, o: any) => {
+  const handleSelect = (c: any) => {
     if (Array.isArray(c)) {
       setSelectedKeys(c);
     } else {
