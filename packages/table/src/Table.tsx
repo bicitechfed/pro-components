@@ -834,7 +834,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
           if (!filterState[key]) {
             return null;
           } else {
-            const column = columns?.filter((c) => c.dataIndex === key)[0] || {};
+            const column = (columns?.filter((c) => c.dataIndex === key)[0] || {}) as any;
             let showText = filterState[key]?.join(',');
             // @ts-ignore
             if (
@@ -846,7 +846,7 @@ const ProTable = <T extends Record<string, any>, U extends ParamsType, ValueType
                 // @ts-ignore
                 const t = column.fieldProps.options.filter((item) => item.value === k);
                 if (t && t.length > 0) {
-                  return t[0].label;
+                  return t[0].label || t[0].text;
                 }
                 return '';
               });

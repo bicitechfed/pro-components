@@ -54,6 +54,7 @@ const RenderSelectDom = ({
     if (typeof request == 'function') {
       const data = await request();
       setOptions(data);
+      fieldProps.options = data;
     }
   };
   useEffect(() => {
@@ -264,9 +265,9 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
     request,
   }: any) => {
     const filters: any = [];
-    forEach(valueEnum, (value: object, key) => {
+    forEach(valueEnum, (value: any, key) => {
       filters.push({
-        ...value,
+        label: value.text,
         value: key,
       });
     });
@@ -274,7 +275,7 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
       filters.length = 0;
       forEach(fieldProps.options, (item: any) => {
         filters.push({
-          text: item.label || item.text,
+          label: item.label || item.text,
           value: item.value,
         });
       });

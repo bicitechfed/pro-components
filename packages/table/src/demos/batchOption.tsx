@@ -56,7 +56,20 @@ export default () => {
     name: ['majy'],
   });
   const tableRef = createRef<ActionType>();
-  const [opts, setOpts] = useState([]);
+  const [opts, setOpts] = useState([
+    {
+      label: 'item 1',
+      value: 'a',
+    },
+    {
+      label: 'item 2',
+      value: 'b',
+    },
+    {
+      label: 'item 3',
+      value: 'c',
+    },
+  ]);
 
   const requestStateMap: ProFieldRequestData = async () => {
     let data: RequestOptionsType[] = [];
@@ -139,19 +152,19 @@ export default () => {
         filters: true,
         onFilter: true,
         width: 100,
-        defaultFilteredValue: [624748504],
-        // request:requestStateMap,
-        valueEnum: {
-          all: { text: '全部' },
-          付小小: { text: '付小小' },
-          曲丽丽: { text: '曲丽丽' },
-          林东东: { text: '林东东' },
-          陈帅帅: { text: '陈帅帅' },
-          兼某某: { text: '兼某某' },
-        },
+        // defaultFilteredValue: [624748504],
+        request: requestStateMap,
+        // valueEnum: {
+        //   all: { text: '全部' },
+        //   付小小: { text: '付小小' },
+        //   曲丽丽: { text: '曲丽丽' },
+        //   林东东: { text: '林东东' },
+        //   陈帅帅: { text: '陈帅帅' },
+        //   兼某某: { text: '兼某某' },
+        // },
         fieldProps: {
           options: opts,
-          mode: 'multiple',
+          // mode:'multiple',
           dropdownStyle: { width: 200 },
         },
       },
