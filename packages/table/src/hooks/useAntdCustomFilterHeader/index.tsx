@@ -73,7 +73,7 @@ const RenderSelectDom = ({
     <Select
       {...fieldProps}
       value={selectedKeys}
-      style={{ width: '100%' }}
+      style={{ width: '100%', minWidth: 100 }}
       options={options}
       onChange={handleSelect}
     />
@@ -445,7 +445,7 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
       }: any) => {
         onReset = clearFilters;
         return (
-          <div style={{ padding: 8 }}>
+          <div style={{ padding: 8, display: 'flex', flexDirection: 'row' }}>
             <RenderSelectDom
               setSelectedKeys={setSelectedKeys}
               selectedKeys={selectedKeys}
