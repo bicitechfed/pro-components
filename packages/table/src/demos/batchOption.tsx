@@ -157,6 +157,7 @@ export default () => {
         //   兼某某: { text: '兼某某' },
         // },
         fieldProps: {
+          // showSearch:false,
           options: opts,
           // mode:'multiple',
           dropdownStyle: { width: 200 },

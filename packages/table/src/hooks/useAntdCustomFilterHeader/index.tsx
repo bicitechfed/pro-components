@@ -71,9 +71,15 @@ const RenderSelectDom = ({
 
   return (
     <Select
+      showSearch
+      filterOption={(input, option) => {
+        // @ts-ignore
+        return option?.label.indexOf(input) != -1;
+      }}
+      optionFilterProp="children"
       {...fieldProps}
       value={selectedKeys}
-      style={{ width: '100%', minWidth: 100 }}
+      style={{ width: '100%', minWidth: 100, maxWidth: 500 }}
       options={options}
       onChange={handleSelect}
     />
@@ -445,7 +451,7 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
       }: any) => {
         onReset = clearFilters;
         return (
-          <div style={{ padding: 8, display: 'flex', flexDirection: 'row' }}>
+          <div style={{ padding: 8, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <RenderSelectDom
               setSelectedKeys={setSelectedKeys}
               selectedKeys={selectedKeys}
@@ -458,9 +464,17 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                marginTop: 8,
+                marginLeft: 10,
               }}
             >
+              <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                size="small"
+                style={{ width: 50 }}
+              >
+                确定
+              </Button>
               <Button
                 type="link"
                 onClick={() => handleReset(clearFilters, selectedKeys, dataIndex, confirm)}
@@ -469,14 +483,6 @@ const useAntdFilterHeader = ({ columns, proFilter, reload, setProFilter }: any) 
                 style={{ width: 50 }}
               >
                 重置
-              </Button>
-              <Button
-                type="primary"
-                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                size="small"
-                style={{ width: 50 }}
-              >
-                确定
               </Button>
             </div>
           </div>
